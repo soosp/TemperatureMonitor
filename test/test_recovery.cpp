@@ -23,7 +23,7 @@ int main() {
         r.dev(2).resolution = 12;                    // EEPROM default after power-up
         r.m.begin("tm", false, 9);
         r.cycle();
-        CHECK_STATE(r.state(1), State::DISABLED);
+        CHECK_STATE(r.state(1), State::OFF);
         r.dev(2).present = true;
         r.cycle();
         CHECK(r.dev(2).resolution == 9);

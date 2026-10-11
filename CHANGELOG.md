@@ -8,6 +8,16 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- `TemperatureChannel::State::OFF`: the name of the monitoring-off state;
+  `DISABLED` remains as an alias where it can be written
+
+### Fixed
+
+- ESP32 builds: the core defines `DISABLED` (an interrupt mode) as a macro,
+  which broke the `State` declaration; the macro is set aside around it
+
 ## [0.1.0] - 2026-10-08
 
 ### Added

@@ -1,6 +1,6 @@
 /**
  * @file test_cycle.cpp
- * @brief poll(): timing, readings, events, MISSING/DISABLED, reconnection.
+ * @brief poll(): timing, readings, events, MISSING/OFF, reconnection.
  */
 
 #include "test_harness.h"
@@ -39,7 +39,7 @@ int main() {
         CHECK(r.events.size() == 1);
     }
 
-    SECTION("new sensor: DISABLED, value still measured");
+    SECTION("new sensor: OFF, value still measured");
     {
         resetStore();
         Rig r;
@@ -47,7 +47,7 @@ int main() {
         r.m.begin(nullptr);
         r.cycle();
         CHECK(r.events.size() == 1);
-        CHECK_STATE(r.events[0].to, State::DISABLED);
+        CHECK_STATE(r.events[0].to, State::OFF);
         CHECK(!TemperatureChannel::isAlarm(r.events[0].to));
         CHECK_NEAR(r.events[0].value, 30.0f, 1e-3);
     }
@@ -119,14 +119,14 @@ int main() {
         r.add(1, 24.0f);                             // chamber not in operation
         r.m.begin(nullptr);
         r.run(120);
-        CHECK_STATE(r.state(0), State::DISABLED);
+        CHECK_STATE(r.state(0), State::OFF);
         Cfg c = freezer();
         r.m.setConfig(0, a, c);
-        CHECK_STATE(r.state(0), State::DISABLED);    // applied at the next cycle
+        CHECK_STATE(r.state(0), State::OFF);    // applied at the next cycle
         r.cycle();
         CHECK_STATE(r.state(0), State::CRITICAL_HIGH);
         const TemperatureMonitor::Event* e = r.lastFor(0);
-        CHECK(e && e->from == State::DISABLED && e->to == State::CRITICAL_HIGH);
+        CHECK(e && e->from == State::OFF && e->to == State::CRITICAL_HIGH);
     }
 
     SECTION("disabled beats missing");
@@ -138,7 +138,7 @@ int main() {
         r.dev(1).present = false;
         r.m.begin("tm");
         r.cycle();
-        CHECK_STATE(r.state(0), State::DISABLED);
+        CHECK_STATE(r.state(0), State::OFF);
     }
 
     SECTION("sensor error: FAULT with the reason");

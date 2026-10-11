@@ -5,6 +5,11 @@
  */
 #include <stdint.h>
 
+// The ESP32 core defines DISABLED (an interrupt mode) as a macro, and every
+// sketch sees it through Arduino.h. Defined here too, so that a library
+// header using the name unprotected fails the host build as well.
+#define DISABLED 0x00
+
 class OneWire {
 public:
     OneWire() {}

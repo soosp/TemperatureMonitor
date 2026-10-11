@@ -171,13 +171,17 @@ int main() {
     {
         char b[TemperatureChannel::STATE_NAME_SIZE];
         CHECK(strcmp(TemperatureChannel::stateName(State::MISSING, b, sizeof(b)), "missing") == 0);
-        CHECK(strcmp(TemperatureChannel::stateName(State::DISABLED, b, sizeof(b)), "disabled") == 0);
+        CHECK(strcmp(TemperatureChannel::stateName(State::OFF, b, sizeof(b)), "disabled") == 0);
         CHECK(strcmp(TemperatureChannel::stateName(State::CRITICAL_LOW, b, sizeof(b)), "critical_low") == 0);
         char rb[TemperatureMonitor::RESULT_NAME_SIZE];
         CHECK(strcmp(TemperatureMonitor::resultName(Result::ADDRESS_MISMATCH, rb, sizeof(rb)), "address_mismatch") == 0);
         CHECK(strlen(rb) == TemperatureMonitor::RESULT_NAME_LEN);
         CHECK(strcmp(TemperatureMonitor::resultName(Result::OK, rb, sizeof(rb)), "ok") == 0);
-        CHECK(!TemperatureChannel::isAlarm(State::DISABLED));
+        CHECK(!TemperatureChannel::isAlarm(State::OFF));
+#pragma push_macro("DISABLED")
+#undef DISABLED
+        CHECK(State::DISABLED == State::OFF);     // the old name, where usable
+#pragma pop_macro("DISABLED")
         CHECK(!TemperatureChannel::isAlarm(State::PENDING_LOW));
         CHECK(TemperatureChannel::isAlarm(State::FAULT));
     }

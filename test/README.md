@@ -28,7 +28,7 @@ elsewhere, edit that entry in `.vscode/tasks.json`.
 |File|Area|
 |---|---|
 |`test_discovery.cpp`|First start, restart in a different bus order, sensor replaced, slots full, family kept, no needless writes, unreadable records, storage failure|
-|`test_cycle.cpp`|Non-blocking timing, resolution, DISABLED/MISSING, reconnection, delay to ALARM, FAULT with its reason, callback without locks|
+|`test_cycle.cpp`|Non-blocking timing, resolution, OFF/MISSING, reconnection, delay to ALARM, FAULT with its reason, callback without locks|
 |`test_config.cpp`|Address guard (including the stale-form case), validation, storage failure, `forget()`, UTF-8 names, record format|
 |`test_recovery.cpp`|Sensors coming and going at runtime (resolution restored), `forget()` after a runtime loss and its clearing event, default-config validation, discarding unreadable records|
 

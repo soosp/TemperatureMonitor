@@ -25,9 +25,11 @@
  *
  *   MISSING   assigned, but the sensor was not on the bus at start-up (or has
  *             not answered since). Counts as an alarm.
- *   DISABLED  monitoring switched off: the channel is still read and its
+ *   OFF       monitoring switched off: the channel is still read and its
  *             RangeMonitor still runs, so values stay available, but the
- *             state never alarms. Takes precedence over MISSING.
+ *             state never alarms. Takes precedence over MISSING. Also named
+ *             DISABLED, except on ESP32, whose core defines DISABLED as a
+ *             macro (an interrupt mode).
  *
  * The state is recomputed by update() only, so every transition — including
  * the ones caused by setConfig(), assign() and unassign() — is reported by
@@ -89,6 +91,8 @@ public:
     /**
      * @brief Channel state. 0..8 are RangeMonitor::State values; stable.
      */
+#pragma push_macro("DISABLED")   // a macro on ESP32 (esp32-hal-gpio.h)
+#undef DISABLED
     enum class State : uint8_t {
         UNKNOWN       = 0,  ///< Not assigned, or no valid sample yet
         OK            = 1,
@@ -100,8 +104,10 @@ public:
         CRITICAL_LOW  = 7,
         FAULT         = 8,  ///< Sensor errors for at least the fault delay
         MISSING       = 9,  ///< Assigned, sensor not on the bus
-        DISABLED      = 10  ///< Monitoring off; never alarms
+        OFF           = 10, ///< Monitoring off; never alarms
+        DISABLED      = OFF ///< Same as OFF; on ESP32 write OFF (see above)
     };
+#pragma pop_macro("DISABLED")
 
     /// Number of State values.
     static constexpr uint8_t STATE_COUNT = 11;
@@ -448,7 +454,7 @@ public:
     static char* stateName(State s, char* buf, size_t len) {
         if (buf == nullptr || len == 0) return nullptr;
         if (s == State::MISSING)  return _copyP(_missingName(), buf, len);
-        if (s == State::DISABLED) return _copyP(_disabledName(), buf, len);
+        if (s == State::OFF) return _copyP(_disabledName(), buf, len);
         return RangeMonitor::stateName(static_cast<RangeMonitor::State>(s), buf, len);
     }
 
@@ -481,7 +487,7 @@ private:
 
     State _computeState() const {
         if (!_assigned) return State::UNKNOWN;
-        if (!_enabled)  return State::DISABLED;
+        if (!_enabled)  return State::OFF;
         if (!_present)  return State::MISSING;
         return static_cast<State>(_monitor.state());
     }

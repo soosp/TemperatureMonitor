@@ -96,11 +96,15 @@ See `examples/Monitor`.
 |`CRITICAL_HIGH` / `CRITICAL_LOW`|Outside a hard limit|yes|
 |`FAULT`|Sensor errors for at least the fault delay|yes|
 |`MISSING`|Stored slot, sensor not on the bus|yes|
-|`DISABLED`|Monitoring off; measured, never alarms|no|
+|`OFF`|Monitoring off; measured, never alarms. Also `DISABLED` (see below)|no|
 
-Values 0–8 are the RangeMonitor states; all values are stable. `DISABLED`
+Values 0–8 are the RangeMonitor states; all values are stable. `OFF`
 takes precedence over `MISSING`. `TemperatureChannel::isAlarm()` and
 `stateName()` cover all of them.
+
+On ESP32 the core's `Arduino.h` defines `DISABLED` as a macro (an interrupt
+mode), so write `State::OFF` there. `State::DISABLED` remains as an alias for
+code on the other platforms; `stateName()` still returns `"disabled"`.
 
 ## Slots and persistence
 
