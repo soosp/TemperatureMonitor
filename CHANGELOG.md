@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-11
+
 ### Added
 
 - `TemperatureChannel::State::OFF`: the name of the monitoring-off state;
@@ -41,5 +43,6 @@ and this project adheres to
   CheckDS18B20 and Preferences, runnable from VS Code with Ctrl+Shift+B
 - Example: `Monitor`
 
-[Unreleased]: https://github.com/soosp/TemperatureMonitor/compare/0.1.0...HEAD
+[Unreleased]: https://github.com/soosp/TemperatureMonitor/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/soosp/TemperatureMonitor/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/soosp/TemperatureMonitor/releases/tag/0.1.0
