@@ -8,6 +8,19 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- RangeMonitor's `confirmBeyondLimit` is stored in the slot record, as bit
+  `0x04` of the flags byte. The bit is set when the option is off, so records
+  written by 0.2.0 read as on, the RangeMonitor default; 0.2.0 ignores the
+  bit when reading a newer record
+
+### Changed
+
+- Requires RangeMonitor 0.3.0. A channel's alarm is now raised only beyond
+  the soft limit (see the RangeMonitor changelog)
+- The library description says `OFF` instead of `DISABLED`
+
 ## [0.2.0] - 2026-10-11
 
 ### Added

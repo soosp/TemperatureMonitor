@@ -530,7 +530,9 @@ public:
         buf[p++] = RECORD_VERSION;
         memcpy(buf + p, address, 8);                      p += 8;
         buf[p++] = (uint8_t)family;
-        buf[p++] = (uint8_t)((cfg.enabled ? 0x01 : 0) | (cfg.range.spikeFilter ? 0x02 : 0));
+        buf[p++] = (uint8_t)((cfg.enabled ? FLAG_ENABLED : 0) |
+                             (cfg.range.spikeFilter ? FLAG_SPIKE_FILTER : 0) |
+                             (cfg.range.confirmBeyondLimit ? 0 : FLAG_ALARM_IN_BAND));
         size_t nameLen = strlen(cfg.name);
         if (nameLen > TemperatureChannel::NAME_LEN) nameLen = TemperatureChannel::NAME_LEN;
         buf[p++] = (uint8_t)nameLen;
@@ -564,8 +566,9 @@ public:
         p++;                                               // name length
         memcpy(cfg.name, buf + p, nameLen);                p += nameLen;
         cfg.name[nameLen]      = '\0';
-        cfg.enabled            = (flags & 0x01) != 0;
-        cfg.range.spikeFilter  = (flags & 0x02) != 0;
+        cfg.enabled            = (flags & FLAG_ENABLED) != 0;
+        cfg.range.spikeFilter  = (flags & FLAG_SPIKE_FILTER) != 0;
+        cfg.range.confirmBeyondLimit = (flags & FLAG_ALARM_IN_BAND) == 0;
         cfg.range.loSoft       = _getF(buf, p);            p += 4;
         cfg.range.hiSoft       = _getF(buf, p);            p += 4;
         cfg.range.loHard       = _getF(buf, p);            p += 4;
@@ -578,6 +581,13 @@ public:
     }
 
 private:
+    // Record flag bits. A set bit never stands for a default introduced later:
+    // records written before a flag existed read as 0 and get the new default
+    // (FLAG_ALARM_IN_BAND: 0 = confirmBeyondLimit, the RangeMonitor default).
+    static constexpr uint8_t FLAG_ENABLED       = 0x01;
+    static constexpr uint8_t FLAG_SPIKE_FILTER  = 0x02;
+    static constexpr uint8_t FLAG_ALARM_IN_BAND = 0x04;
+
     // =========================================================================
     // SLOTS (lock held)
     // =========================================================================

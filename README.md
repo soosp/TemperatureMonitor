@@ -110,8 +110,9 @@ code on the other platforms; `stateName()` still returns `"disabled"`.
 
 There are `TEMPERATURE_MONITOR_MAX_CHANNELS` slots (16; 4 on AVR). Each bound
 slot is stored as one record under key `s<slot>` in the namespace given to
-`begin()`: version, address, family, flags, name and limits, serialised field
-by field (no struct dump), at most `RECORD_SIZE` (76) bytes. Storage is the
+`begin()`: version, address, family, flags (enabled, spike filter,
+`confirmBeyondLimit`), name and limits, serialised field by field (no struct
+dump), at most `RECORD_SIZE` (76) bytes. Storage is the
 Preferences API on every platform: native on ESP32,
 [vshymanskyy/Preferences](https://github.com/vshymanskyy/Preferences) on
 ESP8266, [EEPROMPreferences](https://github.com/soosp/EEPROMPreferences) on

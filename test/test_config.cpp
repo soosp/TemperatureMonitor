@@ -141,6 +141,7 @@ int main() {
         CHECK_NEAR(d.range.loHard, -30.0f, 1e-6);
         CHECK(std::isnan(d.range.hiHard) == false);
         CHECK(d.range.tauSeconds == c.range.tauSeconds);
+        CHECK(d.range.confirmBeyondLimit);
 
         Cfg full;
         memset(full.name, 'n', TemperatureChannel::NAME_LEN);
@@ -155,6 +156,25 @@ int main() {
         buf[0] = TemperatureMonitor::RECORD_VERSION;
         buf[9] = 200;
         CHECK(!TemperatureMonitor::unpackRecord(buf, len, a, f, d));       // bad family
+    }
+
+    SECTION("record: confirmBeyondLimit, and 0.2.0 records get it");
+    {
+        Cfg c = freezer("Kamra 1");
+        c.range.confirmBeyondLimit = false;
+        uint8_t buf[TemperatureMonitor::RECORD_SIZE];
+        size_t len = TemperatureMonitor::packRecord(buf, a1, CheckDS18B20::FAMILY_C, c);
+        DeviceAddress a; DS18B20Sensor::Family f; Cfg d;
+        CHECK(TemperatureMonitor::unpackRecord(buf, len, a, f, d));
+        CHECK(!d.range.confirmBeyondLimit);
+        CHECK(d.enabled && d.range.spikeFilter);
+
+        // A 0.2.0 record: flags hold only the enabled and spike filter bits
+        c.range.confirmBeyondLimit = true;
+        len = TemperatureMonitor::packRecord(buf, a1, CheckDS18B20::FAMILY_C, c);
+        CHECK(buf[10] == 0x03);
+        CHECK(TemperatureMonitor::unpackRecord(buf, len, a, f, d));
+        CHECK(d.range.confirmBeyondLimit);
     }
 
     SECTION("record: a config that no longer validates is rejected");
