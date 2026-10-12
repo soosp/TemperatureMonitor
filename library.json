@@ -1,6 +1,6 @@
 {
   "name": "TemperatureMonitor",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Monitored DS18B20 temperature channels on one 1-Wire bus for ESP32, ESP8266 and AVR (Arduino). Address-bound slots stored with their configuration, discovery and automatic reconnection, a non-blocking measuring cycle, events for every state change (including MISSING and OFF), and address-guarded configuration changes. Built on RangeMonitor and DS18B20Sensor; no dynamic allocation; host-testable.",
   "keywords": "temperature, monitor, alarm, ds18b20, onewire, 1-wire, freezer, cold room, nvs, freertos",
   "repository": {
